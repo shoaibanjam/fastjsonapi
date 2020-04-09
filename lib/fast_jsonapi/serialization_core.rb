@@ -62,7 +62,9 @@ module FastJsonapi
         meta_to_serialize.call(record, params)
       end
 
-      def record_hash(record, fieldset, params = {})
+      def record_hash(record, fieldset, params = {}, hash_only = false)
+        return attributes_hash(record, fieldset, params) if attributes_to_serialize.present? && hash_only
+
         if cached
           record_hash = Rails.cache.fetch(record.cache_key, expires_in: cache_length, race_condition_ttl: race_condition_ttl) do
             temp_hash = id_hash(id_from_record(record), record_type, true)
